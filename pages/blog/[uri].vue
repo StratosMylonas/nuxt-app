@@ -1,5 +1,5 @@
 <template>
-  <div v-if="fetching">Loading...</div>
+  <div v-if="fetching"><p>Loading...</p></div>
   <div v-else>
     <h1>{{ data.post.title }}</h1>
     <img :src="data.post.featuredImage?.node?.sourceUrl" />
