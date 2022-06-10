@@ -1,0 +1,13 @@
+query post($id: ID!) {
+  post(id: $id, idType: SLUG) {
+    title
+    featuredImage {
+      node {
+        sourceUrl
+      }
+    }
+    id
+    title
+    content
+  }
+}

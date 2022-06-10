@@ -1,0 +1,30 @@
+@import url("https://fonts.google.com/specimen/Manrope");
+
+body,
+head {
+  background-color: black;
+  display: table;
+  margin: auto;
+  font-family: "Manrope", sans-serif;
+}
+
+p {
+  color: white;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+
+table {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.blogText {
+  color: white;
+  max-width: 500px;
+  text-align: justify;
+}

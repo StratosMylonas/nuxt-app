@@ -1,0 +1,15 @@
+query allPosts {
+  posts {
+    nodes {
+      title
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+      id
+      uri
+      slug
+    }
+  }
+}

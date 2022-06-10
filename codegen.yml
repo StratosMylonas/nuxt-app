@@ -1,0 +1,8 @@
+schema: http://wp-stratos-test.test/graphql
+documents: './gql/**/*.graphql'
+generates:
+  ./gql/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-vue-urql
