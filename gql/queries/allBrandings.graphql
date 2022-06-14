@@ -1,0 +1,9 @@
+query allBrandings {
+  brandings {
+    nodes {
+      title
+      id
+      content
+    }
+  }
+}

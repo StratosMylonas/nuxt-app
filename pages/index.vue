@@ -51,5 +51,11 @@
       </table>
     </div>
     <NuxtLink to="/blog">Blog</NuxtLink>
+    <br>
+    <NuxtLink to="/websites">Websites</NuxtLink>
+    <br>
+    <NuxtLink to="/brandings">Brandings</NuxtLink>
+    <br>
+    <NuxtLink to="/packages">Packages</NuxtLink>
   </div>
 </template>

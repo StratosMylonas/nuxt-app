@@ -1,0 +1,9 @@
+query allPackages {
+  packages {
+    nodes {
+      title
+      id
+      content
+    }
+  }
+}

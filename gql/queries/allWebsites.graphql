@@ -1,0 +1,9 @@
+query allWebsites {
+  websites {
+    nodes {
+      title
+      id
+      content
+    }
+  }
+}
