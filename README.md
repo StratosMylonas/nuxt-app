@@ -1,4 +1,4 @@
-# Nuxt App w/ wpGraphQL
+# Nuxt App wpGraphQL
 
 Nuxt App fetching data from Wordpress backend with GraphQL (including custom post types)
 
