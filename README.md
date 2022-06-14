@@ -1,6 +1,6 @@
 # Nuxt App w/ wpGraphQL
 
-Nuxt App fetching data from Wordpress backend with GraphQL
+Nuxt App fetching data from Wordpress backend with GraphQL (including custom post types)
 
 ## Nuxt 3 Minimal Starter
 
