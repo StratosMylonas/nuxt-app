@@ -15,6 +15,12 @@ export type Scalars = {
   Float: number;
 };
 
+/** A Field Group registered by ACF */
+export type AcfFieldGroup = {
+  /** The name of the ACF Field Group */
+  fieldGroupName?: Maybe<Scalars['String']>;
+};
+
 /** Avatars are profile images for users. WordPress by default uses the Gravatar service to host and fetch avatars from. */
 export type Avatar = {
   __typename?: 'Avatar';
@@ -55,16 +61,10 @@ export enum AvatarRatingEnum {
 }
 
 /** The branding type */
-export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
+export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithContentEditor & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
   __typename?: 'Branding';
   /** Returns ancestors of the node. Default ordered as lowest (closest to the child) to highest (closest to the root). */
   ancestors?: Maybe<HierarchicalContentNodeToContentNodeAncestorsConnection>;
-  /** Connection between the NodeWithAuthor type and the User type */
-  author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
-  /** The database identifier of the author of the node */
-  authorDatabaseId?: Maybe<Scalars['Int']>;
-  /** The globally unique identifier of the author of the node */
-  authorId?: Maybe<Scalars['ID']>;
   /**
    * The id field matches the WP_Post-&gt;ID field.
    * @deprecated Deprecated in favor of the databaseId field
@@ -72,12 +72,6 @@ export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNod
   brandingId: Scalars['Int'];
   /** Connection between the HierarchicalContentNode type and the ContentNode type */
   children?: Maybe<HierarchicalContentNodeToContentNodeChildrenConnection>;
-  /** The number of comments. Even though WPGraphQL denotes this field as an integer, in WordPress this field should be saved as a numeric string for compatibility. */
-  commentCount?: Maybe<Scalars['Int']>;
-  /** Whether the comments are open or closed for this particular post. */
-  commentStatus?: Maybe<Scalars['String']>;
-  /** Connection between the branding type and the Comment type */
-  comments?: Maybe<BrandingToCommentConnection>;
   /** The content of the post. */
   content?: Maybe<Scalars['String']>;
   /** Connection between the ContentNode type and the ContentType type */
@@ -100,14 +94,6 @@ export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNod
   enqueuedScripts?: Maybe<ContentNodeToEnqueuedScriptConnection>;
   /** Connection between the ContentNode type and the EnqueuedStylesheet type */
   enqueuedStylesheets?: Maybe<ContentNodeToEnqueuedStylesheetConnection>;
-  /** The excerpt of the post. */
-  excerpt?: Maybe<Scalars['String']>;
-  /** Connection between the NodeWithFeaturedImage type and the MediaItem type */
-  featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
-  /** The database identifier for the featured image node assigned to the content node */
-  featuredImageDatabaseId?: Maybe<Scalars['Int']>;
-  /** Globally unique ID of the featured image assigned to the node */
-  featuredImageId?: Maybe<Scalars['ID']>;
   /** The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table. */
   guid?: Maybe<Scalars['String']>;
   /** The globally unique identifier of the brandings object. */
@@ -118,8 +104,6 @@ export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNod
   isPreview?: Maybe<Scalars['Boolean']>;
   /** Whether the object is restricted from the current viewer */
   isRestricted?: Maybe<Scalars['Boolean']>;
-  /** True if the node is a revision of another node */
-  isRevision?: Maybe<Scalars['Boolean']>;
   /** Whether the node is a Term */
   isTermNode: Scalars['Boolean'];
   /** The user that most recently edited the node */
@@ -142,15 +126,11 @@ export type Branding = ContentNode & DatabaseIdentifier & HierarchicalContentNod
   previewRevisionDatabaseId?: Maybe<Scalars['Int']>;
   /** Whether the object is a node in the preview state */
   previewRevisionId?: Maybe<Scalars['ID']>;
-  /** If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node. */
-  revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
-  /** Connection between the branding type and the branding type */
-  revisions?: Maybe<BrandingToRevisionConnection>;
   /** The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table. */
   slug?: Maybe<Scalars['String']>;
   /** The current status of the object */
   status?: Maybe<Scalars['String']>;
-  /** The template assigned to a node of content */
+  /** The template assigned to the node */
   template?: Maybe<ContentTemplate>;
   /** The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made. */
   title?: Maybe<Scalars['String']>;
@@ -180,16 +160,6 @@ export type BrandingChildrenArgs = {
 
 
 /** The branding type */
-export type BrandingCommentsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<BrandingToCommentConnectionWhereArgs>;
-};
-
-
-/** The branding type */
 export type BrandingContentArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -214,22 +184,6 @@ export type BrandingEnqueuedStylesheetsArgs = {
 
 
 /** The branding type */
-export type BrandingExcerptArgs = {
-  format?: InputMaybe<PostObjectFieldFormatEnum>;
-};
-
-
-/** The branding type */
-export type BrandingRevisionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<BrandingToRevisionConnectionWhereArgs>;
-};
-
-
-/** The branding type */
 export type BrandingTitleArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -244,159 +198,11 @@ export enum BrandingIdType {
   Uri = 'URI'
 }
 
-/** Connection between the branding type and the Comment type */
-export type BrandingToCommentConnection = {
-  __typename?: 'BrandingToCommentConnection';
-  /** Edges for the BrandingToCommentConnection connection */
-  edges?: Maybe<Array<Maybe<BrandingToCommentConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Comment>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type BrandingToCommentConnectionEdge = {
-  __typename?: 'BrandingToCommentConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Comment>;
-};
-
-/** Arguments for filtering the BrandingToCommentConnection connection */
-export type BrandingToCommentConnectionWhereArgs = {
-  /** Comment author email address. */
-  authorEmail?: InputMaybe<Scalars['String']>;
-  /** Array of author IDs to include comments for. */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to exclude comments for. */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Comment author URL. */
-  authorUrl?: InputMaybe<Scalars['String']>;
-  /** Array of comment IDs to include. */
-  commentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of IDs of users whose unapproved comments will be returned by the query regardless of status. */
-  commentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Include comments of a given type. */
-  commentType?: InputMaybe<Scalars['String']>;
-  /** Include comments from a given array of comment types. */
-  commentTypeIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Exclude comments from a given array of comment types. */
-  commentTypeNotIn?: InputMaybe<Scalars['String']>;
-  /** Content object author ID to limit results by. */
-  contentAuthor?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to retrieve comments for. */
-  contentAuthorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs *not* to retrieve comments for. */
-  contentAuthorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Limit results to those affiliated with a given content object ID. */
-  contentId?: InputMaybe<Scalars['ID']>;
-  /** Array of content object IDs to include affiliated comments for. */
-  contentIdIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of content object IDs to exclude affiliated comments for. */
-  contentIdNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Content object name to retrieve affiliated comments for. */
-  contentName?: InputMaybe<Scalars['String']>;
-  /** Content Object parent ID to retrieve affiliated comments for. */
-  contentParent?: InputMaybe<Scalars['Int']>;
-  /** Array of content object statuses to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentStatus?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Content object type or array of types to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentType?: InputMaybe<Array<InputMaybe<ContentTypeEnum>>>;
-  /** Array of IDs or email addresses of users whose unapproved comments will be returned by the query regardless of $status. Default empty */
-  includeUnapproved?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Karma score to retrieve matching comments for. */
-  karma?: InputMaybe<Scalars['Int']>;
-  /** The cardinality of the order of the connection */
-  order?: InputMaybe<OrderEnum>;
-  /** Field to order the comments by. */
-  orderby?: InputMaybe<CommentsConnectionOrderbyEnum>;
-  /** Parent ID of comment to retrieve children of. */
-  parent?: InputMaybe<Scalars['Int']>;
-  /** Array of parent IDs of comments to retrieve children for. */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of parent IDs of comments *not* to retrieve children for. */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Search term(s) to retrieve matching comments for. */
-  search?: InputMaybe<Scalars['String']>;
-  /** Comment status to limit results by. */
-  status?: InputMaybe<Scalars['String']>;
-  /** Include comments for a specific user ID. */
-  userId?: InputMaybe<Scalars['ID']>;
-};
-
 /** Connection between the branding type and the branding type */
 export type BrandingToPreviewConnectionEdge = {
   __typename?: 'BrandingToPreviewConnectionEdge';
   /** The node of the connection, without the edges */
   node?: Maybe<Branding>;
-};
-
-/** Connection between the branding type and the branding type */
-export type BrandingToRevisionConnection = {
-  __typename?: 'BrandingToRevisionConnection';
-  /** Edges for the brandingToRevisionConnection connection */
-  edges?: Maybe<Array<Maybe<BrandingToRevisionConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Branding>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type BrandingToRevisionConnectionEdge = {
-  __typename?: 'BrandingToRevisionConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Branding>;
-};
-
-/** Arguments for filtering the brandingToRevisionConnection connection */
-export type BrandingToRevisionConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
 };
 
 /** The category type */
@@ -1232,7 +1038,7 @@ export type ContentNodeToEnqueuedStylesheetConnectionEdge = {
 };
 
 /** A union of Content Node Types that support revisions */
-export type ContentRevisionUnion = Branding | Package | Page | Post | Website;
+export type ContentRevisionUnion = Page | Post;
 
 /** The template assigned to a node of content */
 export type ContentTemplate = {
@@ -1452,18 +1258,12 @@ export enum ContentTypesOfTagEnum {
 
 /** Input for the createBranding mutation */
 export type CreateBrandingInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
   menuOrder?: InputMaybe<Scalars['Int']>;
   /** The ID of the parent object */
@@ -1592,18 +1392,12 @@ export type CreateMediaItemPayload = {
 
 /** Input for the createPackage mutation */
 export type CreatePackageInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
   menuOrder?: InputMaybe<Scalars['Int']>;
   /** The ID of the parent object */
@@ -1806,18 +1600,12 @@ export type CreateUserPayload = {
 
 /** Input for the createWebsite mutation */
 export type CreateWebsiteInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
   menuOrder?: InputMaybe<Scalars['Int']>;
   /** The ID of the parent object */
@@ -3361,24 +3149,12 @@ export enum OrderEnum {
 }
 
 /** The package type */
-export type Package = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
+export type Package = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithContentEditor & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
   __typename?: 'Package';
   /** Returns ancestors of the node. Default ordered as lowest (closest to the child) to highest (closest to the root). */
   ancestors?: Maybe<HierarchicalContentNodeToContentNodeAncestorsConnection>;
-  /** Connection between the NodeWithAuthor type and the User type */
-  author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
-  /** The database identifier of the author of the node */
-  authorDatabaseId?: Maybe<Scalars['Int']>;
-  /** The globally unique identifier of the author of the node */
-  authorId?: Maybe<Scalars['ID']>;
   /** Connection between the HierarchicalContentNode type and the ContentNode type */
   children?: Maybe<HierarchicalContentNodeToContentNodeChildrenConnection>;
-  /** The number of comments. Even though WPGraphQL denotes this field as an integer, in WordPress this field should be saved as a numeric string for compatibility. */
-  commentCount?: Maybe<Scalars['Int']>;
-  /** Whether the comments are open or closed for this particular post. */
-  commentStatus?: Maybe<Scalars['String']>;
-  /** Connection between the package type and the Comment type */
-  comments?: Maybe<PackageToCommentConnection>;
   /** The content of the post. */
   content?: Maybe<Scalars['String']>;
   /** Connection between the ContentNode type and the ContentType type */
@@ -3401,14 +3177,6 @@ export type Package = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   enqueuedScripts?: Maybe<ContentNodeToEnqueuedScriptConnection>;
   /** Connection between the ContentNode type and the EnqueuedStylesheet type */
   enqueuedStylesheets?: Maybe<ContentNodeToEnqueuedStylesheetConnection>;
-  /** The excerpt of the post. */
-  excerpt?: Maybe<Scalars['String']>;
-  /** Connection between the NodeWithFeaturedImage type and the MediaItem type */
-  featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
-  /** The database identifier for the featured image node assigned to the content node */
-  featuredImageDatabaseId?: Maybe<Scalars['Int']>;
-  /** Globally unique ID of the featured image assigned to the node */
-  featuredImageId?: Maybe<Scalars['ID']>;
   /** The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table. */
   guid?: Maybe<Scalars['String']>;
   /** The globally unique identifier of the packages object. */
@@ -3419,8 +3187,6 @@ export type Package = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   isPreview?: Maybe<Scalars['Boolean']>;
   /** Whether the object is restricted from the current viewer */
   isRestricted?: Maybe<Scalars['Boolean']>;
-  /** True if the node is a revision of another node */
-  isRevision?: Maybe<Scalars['Boolean']>;
   /** Whether the node is a Term */
   isTermNode: Scalars['Boolean'];
   /** The user that most recently edited the node */
@@ -3448,15 +3214,11 @@ export type Package = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   previewRevisionDatabaseId?: Maybe<Scalars['Int']>;
   /** Whether the object is a node in the preview state */
   previewRevisionId?: Maybe<Scalars['ID']>;
-  /** If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node. */
-  revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
-  /** Connection between the package type and the package type */
-  revisions?: Maybe<PackageToRevisionConnection>;
   /** The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table. */
   slug?: Maybe<Scalars['String']>;
   /** The current status of the object */
   status?: Maybe<Scalars['String']>;
-  /** The template assigned to a node of content */
+  /** The template assigned to the node */
   template?: Maybe<ContentTemplate>;
   /** The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made. */
   title?: Maybe<Scalars['String']>;
@@ -3486,16 +3248,6 @@ export type PackageChildrenArgs = {
 
 
 /** The package type */
-export type PackageCommentsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PackageToCommentConnectionWhereArgs>;
-};
-
-
-/** The package type */
 export type PackageContentArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -3520,22 +3272,6 @@ export type PackageEnqueuedStylesheetsArgs = {
 
 
 /** The package type */
-export type PackageExcerptArgs = {
-  format?: InputMaybe<PostObjectFieldFormatEnum>;
-};
-
-
-/** The package type */
-export type PackageRevisionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PackageToRevisionConnectionWhereArgs>;
-};
-
-
-/** The package type */
 export type PackageTitleArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -3550,159 +3286,11 @@ export enum PackageIdType {
   Uri = 'URI'
 }
 
-/** Connection between the package type and the Comment type */
-export type PackageToCommentConnection = {
-  __typename?: 'PackageToCommentConnection';
-  /** Edges for the PackageToCommentConnection connection */
-  edges?: Maybe<Array<Maybe<PackageToCommentConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Comment>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type PackageToCommentConnectionEdge = {
-  __typename?: 'PackageToCommentConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Comment>;
-};
-
-/** Arguments for filtering the PackageToCommentConnection connection */
-export type PackageToCommentConnectionWhereArgs = {
-  /** Comment author email address. */
-  authorEmail?: InputMaybe<Scalars['String']>;
-  /** Array of author IDs to include comments for. */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to exclude comments for. */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Comment author URL. */
-  authorUrl?: InputMaybe<Scalars['String']>;
-  /** Array of comment IDs to include. */
-  commentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of IDs of users whose unapproved comments will be returned by the query regardless of status. */
-  commentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Include comments of a given type. */
-  commentType?: InputMaybe<Scalars['String']>;
-  /** Include comments from a given array of comment types. */
-  commentTypeIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Exclude comments from a given array of comment types. */
-  commentTypeNotIn?: InputMaybe<Scalars['String']>;
-  /** Content object author ID to limit results by. */
-  contentAuthor?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to retrieve comments for. */
-  contentAuthorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs *not* to retrieve comments for. */
-  contentAuthorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Limit results to those affiliated with a given content object ID. */
-  contentId?: InputMaybe<Scalars['ID']>;
-  /** Array of content object IDs to include affiliated comments for. */
-  contentIdIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of content object IDs to exclude affiliated comments for. */
-  contentIdNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Content object name to retrieve affiliated comments for. */
-  contentName?: InputMaybe<Scalars['String']>;
-  /** Content Object parent ID to retrieve affiliated comments for. */
-  contentParent?: InputMaybe<Scalars['Int']>;
-  /** Array of content object statuses to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentStatus?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Content object type or array of types to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentType?: InputMaybe<Array<InputMaybe<ContentTypeEnum>>>;
-  /** Array of IDs or email addresses of users whose unapproved comments will be returned by the query regardless of $status. Default empty */
-  includeUnapproved?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Karma score to retrieve matching comments for. */
-  karma?: InputMaybe<Scalars['Int']>;
-  /** The cardinality of the order of the connection */
-  order?: InputMaybe<OrderEnum>;
-  /** Field to order the comments by. */
-  orderby?: InputMaybe<CommentsConnectionOrderbyEnum>;
-  /** Parent ID of comment to retrieve children of. */
-  parent?: InputMaybe<Scalars['Int']>;
-  /** Array of parent IDs of comments to retrieve children for. */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of parent IDs of comments *not* to retrieve children for. */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Search term(s) to retrieve matching comments for. */
-  search?: InputMaybe<Scalars['String']>;
-  /** Comment status to limit results by. */
-  status?: InputMaybe<Scalars['String']>;
-  /** Include comments for a specific user ID. */
-  userId?: InputMaybe<Scalars['ID']>;
-};
-
 /** Connection between the package type and the package type */
 export type PackageToPreviewConnectionEdge = {
   __typename?: 'PackageToPreviewConnectionEdge';
   /** The node of the connection, without the edges */
   node?: Maybe<Package>;
-};
-
-/** Connection between the package type and the package type */
-export type PackageToRevisionConnection = {
-  __typename?: 'PackageToRevisionConnection';
-  /** Edges for the packageToRevisionConnection connection */
-  edges?: Maybe<Array<Maybe<PackageToRevisionConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Package>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type PackageToRevisionConnectionEdge = {
-  __typename?: 'PackageToRevisionConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Package>;
-};
-
-/** Arguments for filtering the packageToRevisionConnection connection */
-export type PackageToRevisionConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
 };
 
 /** The page type */
@@ -4094,6 +3682,8 @@ export enum PluginStatusEnum {
 /** The post type */
 export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & NodeWithTrackbacks & UniformResourceIdentifiable & {
   __typename?: 'Post';
+  /** Added to the GraphQL Schema because the ACF Field Group &quot;ACF-Test&quot; was set to Show in GraphQL. */
+  acfTest?: Maybe<Post_Acftest>;
   /** Connection between the NodeWithAuthor type and the User type */
   author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
   /** The database identifier of the author of the node */
@@ -4652,6 +4242,8 @@ export type PostPostFormatsNodeInput = {
 
 /** The status of the object. */
 export enum PostStatusEnum {
+  /** Objects with the acf-disabled status */
+  AcfDisabled = 'ACF_DISABLED',
   /** Objects with the auto-draft status */
   AutoDraft = 'AUTO_DRAFT',
   /** Objects with the draft status */
@@ -5184,6 +4776,15 @@ export type PostTypeLabelDetails = {
   viewItem?: Maybe<Scalars['String']>;
   /** Label for viewing post type archives. */
   viewItems?: Maybe<Scalars['String']>;
+};
+
+/** Field Group */
+export type Post_Acftest = AcfFieldGroup & {
+  __typename?: 'Post_Acftest';
+  content?: Maybe<Scalars['String']>;
+  /** The name of the ACF Field Group */
+  fieldGroupName?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 /** The reading setting type */
@@ -6195,14 +5796,6 @@ export type RootQueryToBrandingConnectionEdge = {
 
 /** Arguments for filtering the RootQueryToBrandingConnection connection */
 export type RootQueryToBrandingConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** Filter the connection based on dates */
   dateQuery?: InputMaybe<DateQueryInput>;
   /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
@@ -6715,14 +6308,6 @@ export type RootQueryToPackageConnectionEdge = {
 
 /** Arguments for filtering the RootQueryToPackageConnection connection */
 export type RootQueryToPackageConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** Filter the connection based on dates */
   dateQuery?: InputMaybe<DateQueryInput>;
   /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
@@ -7271,14 +6856,6 @@ export type RootQueryToWebsiteConnectionEdge = {
 
 /** Arguments for filtering the RootQueryToWebsiteConnection connection */
 export type RootQueryToWebsiteConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** Filter the connection based on dates */
   dateQuery?: InputMaybe<DateQueryInput>;
   /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
@@ -7879,18 +7456,12 @@ export type UniformResourceIdentifiable = {
 
 /** Input for the updateBranding mutation */
 export type UpdateBrandingInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** The ID of the branding object */
   id: Scalars['ID'];
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
@@ -8027,18 +7598,12 @@ export type UpdateMediaItemPayload = {
 
 /** Input for the updatePackage mutation */
 export type UpdatePackageInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** The ID of the package object */
   id: Scalars['ID'];
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
@@ -8304,18 +7869,12 @@ export type UpdateUserPayload = {
 
 /** Input for the updateWebsite mutation */
 export type UpdateWebsiteInput = {
-  /** The userId to assign as the author of the object */
-  authorId?: InputMaybe<Scalars['ID']>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  /** The comment status for the object */
-  commentStatus?: InputMaybe<Scalars['String']>;
   /** The content of the object */
   content?: InputMaybe<Scalars['String']>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: InputMaybe<Scalars['String']>;
-  /** The excerpt of the object */
-  excerpt?: InputMaybe<Scalars['String']>;
   /** The ID of the website object */
   id: Scalars['ID'];
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
@@ -8346,8 +7905,6 @@ export type User = Commenter & DatabaseIdentifier & Node & UniformResourceIdenti
   __typename?: 'User';
   /** Avatar object for user. The avatar object can be retrieved in different sizes by specifying the size argument. */
   avatar?: Maybe<Avatar>;
-  /** Connection between the User type and the branding type */
-  brandings?: Maybe<UserToBrandingConnection>;
   /** User metadata option name. Usually it will be &quot;wp_capabilities&quot;. */
   capKey?: Maybe<Scalars['String']>;
   /** A list of capabilities (permissions) granted to the user */
@@ -8388,8 +7945,6 @@ export type User = Commenter & DatabaseIdentifier & Node & UniformResourceIdenti
   nicename?: Maybe<Scalars['String']>;
   /** Nickname of the user. */
   nickname?: Maybe<Scalars['String']>;
-  /** Connection between the User type and the package type */
-  packages?: Maybe<UserToPackageConnection>;
   /** Connection between the User type and the page type */
   pages?: Maybe<UserToPageConnection>;
   /** Connection between the User type and the post type */
@@ -8413,8 +7968,6 @@ export type User = Commenter & DatabaseIdentifier & Node & UniformResourceIdenti
   userId?: Maybe<Scalars['Int']>;
   /** Username for the user. This field is equivalent to WP_User-&gt;user_login. */
   username?: Maybe<Scalars['String']>;
-  /** Connection between the User type and the website type */
-  websites?: Maybe<UserToWebsiteConnection>;
 };
 
 
@@ -8423,16 +7976,6 @@ export type UserAvatarArgs = {
   forceDefault?: InputMaybe<Scalars['Boolean']>;
   rating?: InputMaybe<AvatarRatingEnum>;
   size?: InputMaybe<Scalars['Int']>;
-};
-
-
-/** A User object */
-export type UserBrandingsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserToBrandingConnectionWhereArgs>;
 };
 
 
@@ -8475,16 +8018,6 @@ export type UserMediaItemsArgs = {
 
 
 /** A User object */
-export type UserPackagesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserToPackageConnectionWhereArgs>;
-};
-
-
-/** A User object */
 export type UserPagesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -8520,16 +8053,6 @@ export type UserRolesArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-};
-
-
-/** A User object */
-export type UserWebsitesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserToWebsiteConnectionWhereArgs>;
 };
 
 /** The Type of Identifier used to fetch a single User node. To be used along with the "id" field. Default is "ID". */
@@ -8576,72 +8099,6 @@ export enum UserRoleEnum {
   /** User role with specific capabilities */
   Subscriber = 'SUBSCRIBER'
 }
-
-/** Connection between the User type and the branding type */
-export type UserToBrandingConnection = {
-  __typename?: 'UserToBrandingConnection';
-  /** Edges for the UserToBrandingConnection connection */
-  edges?: Maybe<Array<Maybe<UserToBrandingConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Branding>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type UserToBrandingConnectionEdge = {
-  __typename?: 'UserToBrandingConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Branding>;
-};
-
-/** Arguments for filtering the UserToBrandingConnection connection */
-export type UserToBrandingConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
-};
 
 /** Connection between the User type and the Comment type */
 export type UserToCommentConnection = {
@@ -8891,72 +8348,6 @@ export type UserToMediaItemConnectionWhereArgs = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-/** Connection between the User type and the package type */
-export type UserToPackageConnection = {
-  __typename?: 'UserToPackageConnection';
-  /** Edges for the UserToPackageConnection connection */
-  edges?: Maybe<Array<Maybe<UserToPackageConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Package>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type UserToPackageConnectionEdge = {
-  __typename?: 'UserToPackageConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Package>;
-};
-
-/** Arguments for filtering the UserToPackageConnection connection */
-export type UserToPackageConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
-};
-
 /** Connection between the User type and the page type */
 export type UserToPageConnection = {
   __typename?: 'UserToPageConnection';
@@ -9129,72 +8520,6 @@ export type UserToUserRoleConnectionEdge = {
   node?: Maybe<UserRole>;
 };
 
-/** Connection between the User type and the website type */
-export type UserToWebsiteConnection = {
-  __typename?: 'UserToWebsiteConnection';
-  /** Edges for the UserToWebsiteConnection connection */
-  edges?: Maybe<Array<Maybe<UserToWebsiteConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Website>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type UserToWebsiteConnectionEdge = {
-  __typename?: 'UserToWebsiteConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Website>;
-};
-
-/** Arguments for filtering the UserToWebsiteConnection connection */
-export type UserToWebsiteConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
-};
-
 /** Field to order the connection by */
 export enum UsersConnectionOrderbyEnum {
   /** Order by display name */
@@ -9251,24 +8576,12 @@ export type WpPageInfo = {
 };
 
 /** The website type */
-export type Website = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
+export type Website = ContentNode & DatabaseIdentifier & HierarchicalContentNode & MenuItemLinkable & Node & NodeWithContentEditor & NodeWithTemplate & NodeWithTitle & UniformResourceIdentifiable & {
   __typename?: 'Website';
   /** Returns ancestors of the node. Default ordered as lowest (closest to the child) to highest (closest to the root). */
   ancestors?: Maybe<HierarchicalContentNodeToContentNodeAncestorsConnection>;
-  /** Connection between the NodeWithAuthor type and the User type */
-  author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
-  /** The database identifier of the author of the node */
-  authorDatabaseId?: Maybe<Scalars['Int']>;
-  /** The globally unique identifier of the author of the node */
-  authorId?: Maybe<Scalars['ID']>;
   /** Connection between the HierarchicalContentNode type and the ContentNode type */
   children?: Maybe<HierarchicalContentNodeToContentNodeChildrenConnection>;
-  /** The number of comments. Even though WPGraphQL denotes this field as an integer, in WordPress this field should be saved as a numeric string for compatibility. */
-  commentCount?: Maybe<Scalars['Int']>;
-  /** Whether the comments are open or closed for this particular post. */
-  commentStatus?: Maybe<Scalars['String']>;
-  /** Connection between the website type and the Comment type */
-  comments?: Maybe<WebsiteToCommentConnection>;
   /** The content of the post. */
   content?: Maybe<Scalars['String']>;
   /** Connection between the ContentNode type and the ContentType type */
@@ -9291,14 +8604,6 @@ export type Website = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   enqueuedScripts?: Maybe<ContentNodeToEnqueuedScriptConnection>;
   /** Connection between the ContentNode type and the EnqueuedStylesheet type */
   enqueuedStylesheets?: Maybe<ContentNodeToEnqueuedStylesheetConnection>;
-  /** The excerpt of the post. */
-  excerpt?: Maybe<Scalars['String']>;
-  /** Connection between the NodeWithFeaturedImage type and the MediaItem type */
-  featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
-  /** The database identifier for the featured image node assigned to the content node */
-  featuredImageDatabaseId?: Maybe<Scalars['Int']>;
-  /** Globally unique ID of the featured image assigned to the node */
-  featuredImageId?: Maybe<Scalars['ID']>;
   /** The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table. */
   guid?: Maybe<Scalars['String']>;
   /** The globally unique identifier of the websites object. */
@@ -9309,8 +8614,6 @@ export type Website = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   isPreview?: Maybe<Scalars['Boolean']>;
   /** Whether the object is restricted from the current viewer */
   isRestricted?: Maybe<Scalars['Boolean']>;
-  /** True if the node is a revision of another node */
-  isRevision?: Maybe<Scalars['Boolean']>;
   /** Whether the node is a Term */
   isTermNode: Scalars['Boolean'];
   /** The user that most recently edited the node */
@@ -9333,15 +8636,11 @@ export type Website = ContentNode & DatabaseIdentifier & HierarchicalContentNode
   previewRevisionDatabaseId?: Maybe<Scalars['Int']>;
   /** Whether the object is a node in the preview state */
   previewRevisionId?: Maybe<Scalars['ID']>;
-  /** If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node. */
-  revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
-  /** Connection between the website type and the website type */
-  revisions?: Maybe<WebsiteToRevisionConnection>;
   /** The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table. */
   slug?: Maybe<Scalars['String']>;
   /** The current status of the object */
   status?: Maybe<Scalars['String']>;
-  /** The template assigned to a node of content */
+  /** The template assigned to the node */
   template?: Maybe<ContentTemplate>;
   /** The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made. */
   title?: Maybe<Scalars['String']>;
@@ -9376,16 +8675,6 @@ export type WebsiteChildrenArgs = {
 
 
 /** The website type */
-export type WebsiteCommentsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WebsiteToCommentConnectionWhereArgs>;
-};
-
-
-/** The website type */
 export type WebsiteContentArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -9410,22 +8699,6 @@ export type WebsiteEnqueuedStylesheetsArgs = {
 
 
 /** The website type */
-export type WebsiteExcerptArgs = {
-  format?: InputMaybe<PostObjectFieldFormatEnum>;
-};
-
-
-/** The website type */
-export type WebsiteRevisionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WebsiteToRevisionConnectionWhereArgs>;
-};
-
-
-/** The website type */
 export type WebsiteTitleArgs = {
   format?: InputMaybe<PostObjectFieldFormatEnum>;
 };
@@ -9440,159 +8713,11 @@ export enum WebsiteIdType {
   Uri = 'URI'
 }
 
-/** Connection between the website type and the Comment type */
-export type WebsiteToCommentConnection = {
-  __typename?: 'WebsiteToCommentConnection';
-  /** Edges for the WebsiteToCommentConnection connection */
-  edges?: Maybe<Array<Maybe<WebsiteToCommentConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Comment>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type WebsiteToCommentConnectionEdge = {
-  __typename?: 'WebsiteToCommentConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Comment>;
-};
-
-/** Arguments for filtering the WebsiteToCommentConnection connection */
-export type WebsiteToCommentConnectionWhereArgs = {
-  /** Comment author email address. */
-  authorEmail?: InputMaybe<Scalars['String']>;
-  /** Array of author IDs to include comments for. */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to exclude comments for. */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Comment author URL. */
-  authorUrl?: InputMaybe<Scalars['String']>;
-  /** Array of comment IDs to include. */
-  commentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of IDs of users whose unapproved comments will be returned by the query regardless of status. */
-  commentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Include comments of a given type. */
-  commentType?: InputMaybe<Scalars['String']>;
-  /** Include comments from a given array of comment types. */
-  commentTypeIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Exclude comments from a given array of comment types. */
-  commentTypeNotIn?: InputMaybe<Scalars['String']>;
-  /** Content object author ID to limit results by. */
-  contentAuthor?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs to retrieve comments for. */
-  contentAuthorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of author IDs *not* to retrieve comments for. */
-  contentAuthorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Limit results to those affiliated with a given content object ID. */
-  contentId?: InputMaybe<Scalars['ID']>;
-  /** Array of content object IDs to include affiliated comments for. */
-  contentIdIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of content object IDs to exclude affiliated comments for. */
-  contentIdNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Content object name to retrieve affiliated comments for. */
-  contentName?: InputMaybe<Scalars['String']>;
-  /** Content Object parent ID to retrieve affiliated comments for. */
-  contentParent?: InputMaybe<Scalars['Int']>;
-  /** Array of content object statuses to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentStatus?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Content object type or array of types to retrieve affiliated comments for. Pass 'any' to match any value. */
-  contentType?: InputMaybe<Array<InputMaybe<ContentTypeEnum>>>;
-  /** Array of IDs or email addresses of users whose unapproved comments will be returned by the query regardless of $status. Default empty */
-  includeUnapproved?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Karma score to retrieve matching comments for. */
-  karma?: InputMaybe<Scalars['Int']>;
-  /** The cardinality of the order of the connection */
-  order?: InputMaybe<OrderEnum>;
-  /** Field to order the comments by. */
-  orderby?: InputMaybe<CommentsConnectionOrderbyEnum>;
-  /** Parent ID of comment to retrieve children of. */
-  parent?: InputMaybe<Scalars['Int']>;
-  /** Array of parent IDs of comments to retrieve children for. */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Array of parent IDs of comments *not* to retrieve children for. */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Search term(s) to retrieve matching comments for. */
-  search?: InputMaybe<Scalars['String']>;
-  /** Comment status to limit results by. */
-  status?: InputMaybe<Scalars['String']>;
-  /** Include comments for a specific user ID. */
-  userId?: InputMaybe<Scalars['ID']>;
-};
-
 /** Connection between the website type and the website type */
 export type WebsiteToPreviewConnectionEdge = {
   __typename?: 'WebsiteToPreviewConnectionEdge';
   /** The node of the connection, without the edges */
   node?: Maybe<Website>;
-};
-
-/** Connection between the website type and the website type */
-export type WebsiteToRevisionConnection = {
-  __typename?: 'WebsiteToRevisionConnection';
-  /** Edges for the websiteToRevisionConnection connection */
-  edges?: Maybe<Array<Maybe<WebsiteToRevisionConnectionEdge>>>;
-  /** The nodes of the connection, without the edges */
-  nodes?: Maybe<Array<Maybe<Website>>>;
-  /** Information about pagination in a connection. */
-  pageInfo?: Maybe<WpPageInfo>;
-};
-
-/** An edge in a connection */
-export type WebsiteToRevisionConnectionEdge = {
-  __typename?: 'WebsiteToRevisionConnectionEdge';
-  /** A cursor for use in pagination */
-  cursor?: Maybe<Scalars['String']>;
-  /** The item at the end of the edge */
-  node?: Maybe<Website>;
-};
-
-/** Arguments for filtering the websiteToRevisionConnection connection */
-export type WebsiteToRevisionConnectionWhereArgs = {
-  /** The user that's connected as the author of the object. Use the userId for the author object. */
-  author?: InputMaybe<Scalars['Int']>;
-  /** Find objects connected to author(s) in the array of author's userIds */
-  authorIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Find objects connected to the author by the author's nicename */
-  authorName?: InputMaybe<Scalars['String']>;
-  /** Find objects NOT connected to author(s) in the array of author's userIds */
-  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Filter the connection based on dates */
-  dateQuery?: InputMaybe<DateQueryInput>;
-  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
-  hasPassword?: InputMaybe<Scalars['Boolean']>;
-  /** Specific ID of the object */
-  id?: InputMaybe<Scalars['Int']>;
-  /** Array of IDs for the objects to retrieve */
-  in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Get objects with a specific mimeType property */
-  mimeType?: InputMaybe<MimeTypeEnum>;
-  /** Slug / post_name of the object */
-  name?: InputMaybe<Scalars['String']>;
-  /** Specify objects to retrieve. Use slugs */
-  nameIn?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
-  notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** What paramater to use to order the objects by. */
-  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
-  /** Use ID to return only children. Use 0 to return only top-level items */
-  parent?: InputMaybe<Scalars['ID']>;
-  /** Specify objects whose parent is in an array */
-  parentIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Specify posts whose parent is not in an array */
-  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Show posts with a specific password. */
-  password?: InputMaybe<Scalars['String']>;
-  /** Show Posts based on a keyword search */
-  search?: InputMaybe<Scalars['String']>;
-  /** Retrieve posts where post status is in an array. */
-  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
-  /** Show posts with a specific status. */
-  status?: InputMaybe<PostStatusEnum>;
-  /** Title of the object */
-  title?: InputMaybe<Scalars['String']>;
 };
 
 /** The writing setting type */
@@ -9631,7 +8756,7 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'RootQuery', post?: { __typename?: 'Post', title?: string | null, id: string, content?: string | null, featuredImage?: { __typename?: 'NodeWithFeaturedImageToMediaItemConnectionEdge', node?: { __typename?: 'MediaItem', sourceUrl?: string | null } | null } | null } | null };
+export type PostQuery = { __typename?: 'RootQuery', post?: { __typename?: 'Post', title?: string | null, id: string, content?: string | null, featuredImage?: { __typename?: 'NodeWithFeaturedImageToMediaItemConnectionEdge', node?: { __typename?: 'MediaItem', sourceUrl?: string | null } | null } | null, acfTest?: { __typename?: 'Post_Acftest', content?: string | null, title?: string | null } | null } | null };
 
 
 export const AllBrandingsDocument = gql`
@@ -9712,6 +8837,10 @@ export const PostDocument = gql`
     id
     title
     content
+    acfTest {
+      content
+      title
+    }
   }
 }
     `;

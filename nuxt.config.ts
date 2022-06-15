@@ -1,3 +1,4 @@
+import { plugin } from '@graphql-codegen/typescript'
 import { defineNuxtConfig } from 'nuxt'
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config

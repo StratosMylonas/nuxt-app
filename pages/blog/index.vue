@@ -1,5 +1,9 @@
 <template>
-  <div v-if="fetching"><p>Loading...</p></div>
+  <div v-if="fetching">
+    <transition name="fade">
+      <p>Loading</p>
+    </transition>
+  </div>
   <div v-else>
     <div v-for="post in data.posts.nodes" :key="post.id">
       <nuxt-link :to="{ path: `/blog/${post.slug}` }">
